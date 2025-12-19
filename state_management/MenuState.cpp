@@ -2,6 +2,7 @@
 #include "MenuState.hpp"
 #include "AnimationState.hpp"
 #include "PhysicsState.hpp"
+#include "RayCollisionState.hpp"
 #include <memory>
 
 
@@ -9,7 +10,12 @@ MenuState::MenuState(sf::RenderWindow &window): State(window) {
     if (!m_font.openFromFile("Manrope-VariableFont_wght.ttf")) {
         std::cout << "Error loading font" << std::endl;
     };
-    std::vector<std::string> menuStrings = {"Menu State.", "Animation State", "Physics State"};
+    std::vector<std::string> menuStrings = {
+        "Menu State",
+        "Animation State",
+        "Physics State",
+        "RayColliion State"
+    };
 
     float positionY = 0.0f;
     for (std::string menuString: menuStrings) {
@@ -43,6 +49,11 @@ void MenuState::update() {
                     std::cout << "P Key is pressed" << std::endl;
                     m_nextState = std::make_unique<PhysicsState>(m_window);
                     // change m_nextState to Physics State
+                    break;
+                }
+                case sf::Keyboard::Key::R: {
+                    std::cout << "R Key is pressed" << std::endl;
+                    m_nextState = std::make_unique<RayCollisionState>(m_window);
                     break;
                 }
                 default: { break ;}

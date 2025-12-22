@@ -9,10 +9,10 @@ struct Intersect {
 
 class RayCollisionState: public State {
     private:
-        std::vector<sf::Vertex>* m_vertices;
-        std::vector<sf::Vertex>* m_raysEnd;
-        sf::VertexArray*         m_vertexArray;
-        sf::VertexArray*         m_rays;
+        std::vector<std::unique_ptr<sf::VertexArray>> m_polygons;
+        std::unique_ptr<sf::Vector2f> m_startPoint;
+        std::vector<float> m_angles;
+        std::vector<sf::VertexArray> m_triangles;
     public:
         RayCollisionState(sf::RenderWindow &window);
 

@@ -4,10 +4,12 @@
 EntityManager::EntityManager() {};
 
 
-void EntityManager::createEntity(const std::string& tag) {
+Entity* EntityManager::createEntity(const std::string& tag) {
     m_totalEntities += 1;
-    std::unique_ptr<Entity> newEntity = std::make_unique<Entity>(new Entity(m_totalEntities, tag));
+    std::unique_ptr<Entity> newEntity = std::unique_ptr<Entity>(new Entity(m_totalEntities, tag));
+    Entity* rawEntityPtr = newEntity.get();
     m_toAdd.push_back(std::move(newEntity));
+    return rawEntityPtr;
 };
 
 
@@ -48,3 +50,6 @@ const EntityVector& EntityManager::getEntities() {
 const EntityPtrVector& EntityManager::getEntitiesByTag(const std::string& tag) {
     return m_entityMap[tag];
 };
+
+
+EntityManager::~EntityManager() {};

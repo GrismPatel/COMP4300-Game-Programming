@@ -24,3 +24,6 @@ const size_t Entity::getId() const {
 void Entity::destroy() {
     m_is_active = false;
 };
+
+
+Entity::~Entity() {};

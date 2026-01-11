@@ -1,4 +1,9 @@
 #!/bin/bash
 
-g++ -std=c++17 main.cpp Game.cpp -I /usr/local/Cellar/sfml/3.0.1/include -o app -lsfml-graphics -lsfml-window -lsfml-system
+g++ -std=c++17 \
+    main.cpp \
+    Game.cpp \
+    Entity.cpp \
+    EntityManager.cpp \
+    -I /usr/local/Cellar/sfml/3.0.1/include -o app -lsfml-graphics -lsfml-window -lsfml-system
 ./app

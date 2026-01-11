@@ -1,7 +1,9 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <memory>
-#include "EntityManager.h"
+#include "Entity.hpp"
+#include <map>
 
 
 typedef std::vector<std::unique_ptr<Entity>> EntityVector;
@@ -17,7 +19,7 @@ class EntityManager {
     public:
         EntityManager();
 
-        void createEntity(const std::string& tag);
+        Entity* createEntity(const std::string& tag);
         void update();
         const EntityVector& getEntities();
         const EntityPtrVector& getEntitiesByTag(const std::string& tag);

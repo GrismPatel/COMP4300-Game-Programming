@@ -8,8 +8,12 @@ struct CSprite {
 };
 
 struct CAnimation {
-    std::string animationName;
-    size_t      totalFramesInAnimation;
+    int    animationPosition;
+    size_t totalFramesInAnimation;  /*number of animations in single line */
+    size_t totalAnimationsInSprite; /*Unique animations in sprite*/
+    int    animationTime;
+    int    singleFrameWidth;        /*texture width/totalFramesInAnimation*/
+    int    singleFrameHeigth;       /*texture height/totalAnimationsInSprite*/
 };
 
 struct CTransform {

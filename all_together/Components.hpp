@@ -14,6 +14,8 @@ struct CAnimation {
     int    animationTime;
     int    singleFrameWidth;        /*texture width/totalFramesInAnimation*/
     int    singleFrameHeigth;       /*texture height/totalAnimationsInSprite*/
+    int    currentFrame = 0;
+    bool   isPlaying = false;
 };
 
 struct CTransform {

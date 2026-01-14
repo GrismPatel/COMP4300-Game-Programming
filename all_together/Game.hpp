@@ -12,10 +12,14 @@ class Game {
         Entity*          m_player;
         EntityManager    m_entityManager;
         int              m_gameFrame = 0;
+
+        void spawnPlayer();
     public:
         Game();
         void run();
         ~Game();
 
+        void sUserInput(Entity* entity);
         void sAnimation(Entity* entity);
+        void sMovement(Entity* entity);
 };

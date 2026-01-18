@@ -11,25 +11,11 @@ void Game::run() {
     while (m_window.isOpen()) {
         m_gameFrame++;
         m_entityManager.update();
-        /*
-        Other system
-        2. Physics
-        4. Collision
-        */
+        
         sUserInput(m_player);
         sAnimation(m_player);
         sMovement(m_player);
-
-        /*
-        Render system
-        The draw happens in render system. and sprite is created in render system
-        using Csprite.
-        */
-        sf::Sprite sprite(*(m_player->cSprite->texture), m_player->cSprite->textureRect);
-        m_window.clear();
-        m_window.draw(sprite);
-        m_window.display();
-
+        sRender();
     };
 };
 
@@ -41,7 +27,7 @@ void Game::spawnPlayer() {
 
     m_player->cSprite = std::make_unique<CSprite>();
     m_player->cSprite->texture = std::make_unique<sf::Texture>();
-    if (!(m_player->cSprite->texture->loadFromFile("Sprite.png"))) {
+    if (!(m_player->cSprite->texture->loadFromFile("player.png"))) {
         std::cout << "Cannot load texture" << std::endl;
     };
 
@@ -54,6 +40,7 @@ void Game::spawnPlayer() {
     m_player->cAnimation->singleFrameHeigth = m_player->cSprite->texture->getSize().y/4;
 
     m_player->cTransform = std::make_unique<CTransform>();
+    m_player->cTransform->position = {400.f, 400.f};
 };
 
 void Game::sUserInput(Entity* entity) {
@@ -143,5 +130,18 @@ void Game::sAnimation(Entity* entity) {
 };
 
 void Game::sMovement(Entity* entity) {
+    entity->cTransform->position.x += entity->cTransform->velocity.x;
+    entity->cTransform->position.y += entity->cTransform->velocity.y;
+    entity->cTransform->velocity = {0.f, 0.f};
+};
 
+void Game::sRender() {
+    sf::Sprite sprite(*(m_player->cSprite->texture), m_player->cSprite->textureRect);
+    sprite.setPosition({
+        m_player->cTransform->position.x,
+        m_player->cTransform->position.y
+    });
+    m_window.clear();
+    m_window.draw(sprite);
+    m_window.display();
 };

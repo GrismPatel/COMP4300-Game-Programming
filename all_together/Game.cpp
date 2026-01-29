@@ -1,9 +1,18 @@
 #include "Game.hpp"
+#include <fstream>
 
 
 Game::Game() {
     m_window.create(sf::VideoMode({800, 600}), "All Together");
 
+    std::ifstream fin("tile.txt");
+    TileConfig tileConfig;
+
+    while (fin >> tileConfig.x >> tileConfig.y) {
+        m_tileConfigs.push_back(tileConfig);
+    };
+
+    setupLayout();
     spawnPlayer();
 };
 
@@ -22,11 +31,31 @@ void Game::run() {
 Game::~Game() {};
 
 
+void Game::setupLayout() {
+    std::shared_ptr<sf::Texture> tileTexture = std::make_shared<sf::Texture>();
+    if (!(tileTexture->loadFromFile("tile.png"))) {
+        std::cout << "Cannot load Tile texture." << std::endl;
+    };
+
+    for (TileConfig tileConfig: m_tileConfigs) {
+        std::cout << tileConfig.x << tileConfig.y << std::endl;
+        Entity* tileEntity = m_entityManager.createEntity("Tile");
+
+        tileEntity->cSprite = std::make_unique<CSprite>();
+        tileEntity->cSprite->texture = std::make_shared<sf::Texture>();
+        tileEntity->cSprite->texture = tileTexture;
+
+        tileEntity->cTransform = std::make_unique<CTransform>();
+        tileEntity->cTransform->position = { tileConfig.x * 1.f, tileConfig.y * 1.f };
+    };
+};
+
+
 void Game::spawnPlayer() {
     m_player = m_entityManager.createEntity("Player");
 
     m_player->cSprite = std::make_unique<CSprite>();
-    m_player->cSprite->texture = std::make_unique<sf::Texture>();
+    m_player->cSprite->texture = std::make_shared<sf::Texture>();
     if (!(m_player->cSprite->texture->loadFromFile("player.png"))) {
         std::cout << "Cannot load texture" << std::endl;
     };
@@ -136,12 +165,21 @@ void Game::sMovement(Entity* entity) {
 };
 
 void Game::sRender() {
-    sf::Sprite sprite(*(m_player->cSprite->texture), m_player->cSprite->textureRect);
-    sprite.setPosition({
-        m_player->cTransform->position.x,
-        m_player->cTransform->position.y
-    });
-    m_window.clear();
-    m_window.draw(sprite);
+    sf::Color backgroundColor(194, 178, 128);
+    m_window.clear(backgroundColor);
+    const EntityVector& entities = m_entityManager.getEntities();
+    for (const std::unique_ptr<Entity>& entity: entities) {
+        if (entity->cSprite != nullptr) {
+            sf::Sprite sprite(*(entity->cSprite->texture));
+            if (entity->cSprite->textureRect != sf::IntRect()) {
+                sprite.setTextureRect(entity->cSprite->textureRect);
+            };
+            sprite.setPosition({
+                entity->cTransform->position.x,
+                entity->cTransform->position.y
+            });
+            m_window.draw(sprite);
+        };
+    };
     m_window.display();
 };

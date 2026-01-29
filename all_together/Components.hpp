@@ -3,7 +3,7 @@
 
 
 struct CSprite {
-    std::unique_ptr<sf::Texture> texture;
+    std::shared_ptr<sf::Texture> texture;
     sf::IntRect                  textureRect;
 };
 

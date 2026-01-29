@@ -28,7 +28,7 @@ class Game {
         void run();
         ~Game();
 
-        void sUserInput(Entity* entity);
+        void sUserInput();
         void sAnimation(Entity* entity);
         void sMovement(Entity* entity);
         void sRender();

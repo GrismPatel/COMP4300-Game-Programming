@@ -20,10 +20,15 @@ void Game::run() {
     while (m_window.isOpen()) {
         m_gameFrame++;
         m_entityManager.update();
+
+        const EntityVector& entities = m_entityManager.getEntities();
         
-        sUserInput(m_player);
-        sAnimation(m_player);
-        sMovement(m_player);
+        sUserInput();
+
+        for (const std::unique_ptr<Entity>& entity: entities) {
+            sAnimation(entity.get());
+            sMovement(entity.get());
+        };
         sRender();
     };
 };
@@ -72,7 +77,7 @@ void Game::spawnPlayer() {
     m_player->cTransform->position = {400.f, 400.f};
 };
 
-void Game::sUserInput(Entity* entity) {
+void Game::sUserInput() {
     while (const std::optional event = m_window.pollEvent() ) {
         if (event->is<sf::Event::Closed>()) {
             m_window.close();
@@ -141,20 +146,22 @@ void Game::sUserInput(Entity* entity) {
 };
 
 void Game::sAnimation(Entity* entity) {
-    if (entity->cAnimation->isPlaying) {
-        m_player->cAnimation->currentFrame = (
-            m_gameFrame/m_player->cAnimation->animationTime
-        ) % m_player->cAnimation->totalFramesInAnimation;
-    };
-    entity->cSprite->textureRect = {
-        {
-            entity->cAnimation->singleFrameWidth*m_player->cAnimation->currentFrame,
-            entity->cAnimation->singleFrameHeigth*entity->cAnimation->animationPosition
-        },
-        {
-            entity->cAnimation->singleFrameWidth,
-            entity->cAnimation->singleFrameHeigth
-        }
+    if (entity->cAnimation != nullptr && entity->cSprite != nullptr) {
+        if (entity->cAnimation->isPlaying) {
+            entity->cAnimation->currentFrame = (
+                m_gameFrame/entity->cAnimation->animationTime
+            ) % entity->cAnimation->totalFramesInAnimation;
+        };
+        entity->cSprite->textureRect = {
+            {
+                entity->cAnimation->singleFrameWidth*entity->cAnimation->currentFrame,
+                entity->cAnimation->singleFrameHeigth*entity->cAnimation->animationPosition
+            },
+            {
+                entity->cAnimation->singleFrameWidth,
+                entity->cAnimation->singleFrameHeigth
+            }
+        };
     };
 };
 

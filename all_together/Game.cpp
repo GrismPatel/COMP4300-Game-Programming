@@ -21,14 +21,10 @@ void Game::run() {
         m_gameFrame++;
         m_entityManager.update();
 
-        const EntityVector& entities = m_entityManager.getEntities();
         
         sUserInput();
-
-        for (const std::unique_ptr<Entity>& entity: entities) {
-            sAnimation(entity.get());
-            sMovement(entity.get());
-        };
+        sAnimation();
+        sMovement();
         sRender();
     };
 };
@@ -54,7 +50,6 @@ void Game::setupLayout() {
         tileEntity->cTransform->position = { tileConfig.x * 1.f, tileConfig.y * 1.f };
     };
 };
-
 
 void Game::spawnPlayer() {
     m_player = m_entityManager.createEntity("Player");
@@ -145,31 +140,41 @@ void Game::sUserInput() {
     };
 };
 
-void Game::sAnimation(Entity* entity) {
-    if (entity->cAnimation != nullptr && entity->cSprite != nullptr) {
-        if (entity->cAnimation->isPlaying) {
-            entity->cAnimation->currentFrame = (
-                m_gameFrame/entity->cAnimation->animationTime
-            ) % entity->cAnimation->totalFramesInAnimation;
-        };
-        entity->cSprite->textureRect = {
-            {
-                entity->cAnimation->singleFrameWidth*entity->cAnimation->currentFrame,
-                entity->cAnimation->singleFrameHeigth*entity->cAnimation->animationPosition
-            },
-            {
-                entity->cAnimation->singleFrameWidth,
-                entity->cAnimation->singleFrameHeigth
-            }
+void Game::sAnimation() {
+    const EntityVector& entities = m_entityManager.getEntities();
+
+    for (const std::unique_ptr<Entity>& entity: entities) {
+        if (entity->cAnimation != nullptr && entity->cSprite != nullptr) {
+            if (entity->cAnimation->isPlaying) {
+                entity->cAnimation->currentFrame = (
+                    m_gameFrame/entity->cAnimation->animationTime
+                ) % entity->cAnimation->totalFramesInAnimation;
+            };
+            entity->cSprite->textureRect = {
+                {
+                    entity->cAnimation->singleFrameWidth*entity->cAnimation->currentFrame,
+                    entity->cAnimation->singleFrameHeigth*entity->cAnimation->animationPosition
+                },
+                {
+                    entity->cAnimation->singleFrameWidth,
+                    entity->cAnimation->singleFrameHeigth
+                }
+            };
         };
     };
 };
 
-void Game::sMovement(Entity* entity) {
-    entity->cTransform->position.x += entity->cTransform->velocity.x;
-    entity->cTransform->position.y += entity->cTransform->velocity.y;
-    entity->cTransform->velocity = {0.f, 0.f};
+void Game::sMovement() {
+    const EntityVector& entities = m_entityManager.getEntities();
+
+    for (const std::unique_ptr<Entity>& entity: entities) {
+        entity->cTransform->position.x += entity->cTransform->velocity.x;
+        entity->cTransform->position.y += entity->cTransform->velocity.y;
+        entity->cTransform->velocity = {0.f, 0.f};
+    };
 };
+
+void Game::sCollision() {};
 
 void Game::sRender() {
     sf::Color backgroundColor(194, 178, 128);

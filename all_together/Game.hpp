@@ -17,7 +17,6 @@ class Game {
         sf::Texture              m_texture;
         Entity*                  m_player;
         std::vector<TileConfig>  m_tileConfigs;
-        // Entity*          m_setUp;
         EntityManager            m_entityManager;
         int                      m_gameFrame = 0;
 
@@ -30,7 +29,14 @@ class Game {
 
         void sUserInput();
         void sAnimation();
-        void sMovement();
         void sCollision();
+        void sMovement();
         void sRender();
+
+        const sf::Vector2f getOverlap(
+            const sf::Vector2f& entityOnePosition,
+            const sf::Vector2f& entityOneSize,
+            const sf::Vector2f& entityTwoPosition,
+            const sf::Vector2f& entityTwoSize
+        );
 };

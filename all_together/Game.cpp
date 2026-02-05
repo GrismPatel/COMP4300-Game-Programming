@@ -24,6 +24,7 @@ void Game::run() {
         
         sUserInput();
         sAnimation();
+        sCollision();
         sMovement();
         sRender();
     };
@@ -174,7 +175,44 @@ void Game::sMovement() {
     };
 };
 
-void Game::sCollision() {};
+void Game::sCollision() {
+    const EntityPtrVector& playersEntities = m_entityManager.getEntitiesByTag("Player");
+    const EntityPtrVector& tilesEntities = m_entityManager.getEntitiesByTag("Tile");
+
+    for ( Entity* playerEntity: playersEntities ) {
+        for (Entity* tileEntity: tilesEntities) {
+            const sf::Vector2f currentOverlap = getOverlap(
+                {
+                    playerEntity->cTransform->position.x + (playerEntity->cAnimation->singleFrameWidth/2.f),
+                    playerEntity->cTransform->position.y + (playerEntity->cAnimation->singleFrameHeigth/2.f)
+                },
+                {
+                    playerEntity->cAnimation->singleFrameWidth*1.f,
+                    playerEntity->cAnimation->singleFrameHeigth*1.f
+                },
+                {
+                    tileEntity->cTransform->position.x + (tileEntity->cSprite->texture->getSize().x/2.f),
+                    tileEntity->cTransform->position.y + (tileEntity->cSprite->texture->getSize().y/2.f)
+                },
+                {
+                    tileEntity->cSprite->texture->getSize().x*1.f,
+                    tileEntity->cSprite->texture->getSize().y*1.f
+                }
+            );
+            if (currentOverlap.x > 0 and currentOverlap.y > 0) {
+                std::cout << "playerEntity->cTransform->position: " << playerEntity->cTransform->position.x << " " << playerEntity->cTransform->position.y << std::endl;
+                std::cout << "playerEntity->size: " << playerEntity->cAnimation->singleFrameWidth << " " << playerEntity->cAnimation->singleFrameHeigth*1.f << std::endl;
+                std::cout << "tileEntity->cTransform->position: " << tileEntity->cTransform->position.x << " " << tileEntity->cTransform->position.y << std::endl;
+                std::cout << "tileEntity->size: " << tileEntity->cSprite->texture->getSize().x << " " << tileEntity->cSprite->texture->getSize().y << std::endl;
+                std::cout << "currentOverlap: " << currentOverlap.x << " " << currentOverlap.y << std::endl;
+            };
+            /*
+            2. if condition then previous overlap.
+            3. identified collision so if top, bottom, left, right we change velocity
+            */
+        };
+    };
+};
 
 void Game::sRender() {
     sf::Color backgroundColor(194, 178, 128);
@@ -194,4 +232,21 @@ void Game::sRender() {
         };
     };
     m_window.display();
+};
+
+const sf::Vector2f Game::getOverlap(
+    const sf::Vector2f& entityOnePosition,
+    const sf::Vector2f& entityOneSize,
+    const sf::Vector2f& entityTwoPosition,
+    const sf::Vector2f& entityTwoSize
+) {
+    sf::Vector2f delta = {
+        std::abs(entityOnePosition.x - entityTwoPosition.x),
+        std::abs(entityOnePosition.y - entityTwoPosition.y)
+    };
+
+    return {
+        (entityOneSize.x*0.5f) + (entityTwoSize.x*0.5f) - delta.x,
+        (entityOneSize.y*0.5f) + (entityTwoSize.y*0.5f) - delta.y
+    };
 };

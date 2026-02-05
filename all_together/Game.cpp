@@ -49,6 +49,9 @@ void Game::setupLayout() {
 
         tileEntity->cTransform = std::make_unique<CTransform>();
         tileEntity->cTransform->position = { tileConfig.x * 1.f, tileConfig.y * 1.f };
+        tileEntity->cTransform->size = { 
+            tileTexture->getSize().x  * 1.f,  tileTexture->getSize().y  * 1.f
+        };
     };
 };
 
@@ -71,6 +74,10 @@ void Game::spawnPlayer() {
 
     m_player->cTransform = std::make_unique<CTransform>();
     m_player->cTransform->position = {400.f, 400.f};
+    m_player->cTransform->size = {
+        m_player->cAnimation->singleFrameWidth*1.f,
+        m_player->cAnimation->singleFrameHeigth*1.f
+    };
 };
 
 void Game::sUserInput() {
@@ -183,21 +190,15 @@ void Game::sCollision() {
         for (Entity* tileEntity: tilesEntities) {
             const sf::Vector2f currentOverlap = getOverlap(
                 {
-                    playerEntity->cTransform->position.x + (playerEntity->cAnimation->singleFrameWidth/2.f),
-                    playerEntity->cTransform->position.y + (playerEntity->cAnimation->singleFrameHeigth/2.f)
+                    playerEntity->cTransform->position.x + (playerEntity->cTransform->size.x/2.f),
+                    playerEntity->cTransform->position.y + (playerEntity->cTransform->size.y/2.f)
                 },
+                playerEntity->cTransform->size,
                 {
-                    playerEntity->cAnimation->singleFrameWidth*1.f,
-                    playerEntity->cAnimation->singleFrameHeigth*1.f
+                    tileEntity->cTransform->position.x + (tileEntity->cTransform->size.x/2.f),
+                    tileEntity->cTransform->position.y + (tileEntity->cTransform->size.y/2.f),
                 },
-                {
-                    tileEntity->cTransform->position.x + (tileEntity->cSprite->texture->getSize().x/2.f),
-                    tileEntity->cTransform->position.y + (tileEntity->cSprite->texture->getSize().y/2.f)
-                },
-                {
-                    tileEntity->cSprite->texture->getSize().x*1.f,
-                    tileEntity->cSprite->texture->getSize().y*1.f
-                }
+                tileEntity->cTransform->size
             );
             if (currentOverlap.x > 0 and currentOverlap.y > 0) {
                 std::cout << "playerEntity->cTransform->position: " << playerEntity->cTransform->position.x << " " << playerEntity->cTransform->position.y << std::endl;

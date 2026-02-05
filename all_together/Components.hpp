@@ -19,6 +19,7 @@ struct CAnimation {
 };
 
 struct CTransform {
+    sf::Vector2f size;
     sf::Vector2f position;
     sf::Vector2f velocity = {0.f, 0.f};
     float        angle = 0;

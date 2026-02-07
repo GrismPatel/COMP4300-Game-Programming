@@ -176,6 +176,7 @@ void Game::sMovement() {
     const EntityVector& entities = m_entityManager.getEntities();
 
     for (const std::unique_ptr<Entity>& entity: entities) {
+        entity->cTransform->previousPosition = entity->cTransform->position;
         entity->cTransform->position.x += entity->cTransform->velocity.x;
         entity->cTransform->position.y += entity->cTransform->velocity.y;
         entity->cTransform->velocity = {0.f, 0.f};
@@ -201,11 +202,34 @@ void Game::sCollision() {
                 tileEntity->cTransform->size
             );
             if (currentOverlap.x > 0 and currentOverlap.y > 0) {
-                std::cout << "playerEntity->cTransform->position: " << playerEntity->cTransform->position.x << " " << playerEntity->cTransform->position.y << std::endl;
-                std::cout << "playerEntity->size: " << playerEntity->cAnimation->singleFrameWidth << " " << playerEntity->cAnimation->singleFrameHeigth*1.f << std::endl;
-                std::cout << "tileEntity->cTransform->position: " << tileEntity->cTransform->position.x << " " << tileEntity->cTransform->position.y << std::endl;
-                std::cout << "tileEntity->size: " << tileEntity->cSprite->texture->getSize().x << " " << tileEntity->cSprite->texture->getSize().y << std::endl;
-                std::cout << "currentOverlap: " << currentOverlap.x << " " << currentOverlap.y << std::endl;
+                const sf::Vector2f previousOverlap = getOverlap(
+                    {
+                        playerEntity->cTransform->previousPosition.x + (playerEntity->cTransform->size.x/2.f),
+                        playerEntity->cTransform->previousPosition.y + (playerEntity->cTransform->size.y/2.f)
+                    },
+                    playerEntity->cTransform->size,
+                    {
+                    tileEntity->cTransform->position.x + (tileEntity->cTransform->size.x/2.f),
+                    tileEntity->cTransform->position.y + (tileEntity->cTransform->size.y/2.f),
+                    },
+                    tileEntity->cTransform->size
+                );
+                if (previousOverlap.x >= 0 and (playerEntity->cTransform->position.y > playerEntity->cTransform->previousPosition.y)) {
+                    std::cout << "coming from up and collided" << std::endl;
+                    playerEntity->cTransform->velocity.y -= currentOverlap.y;
+                }
+                else if (previousOverlap.x >= 0 and (playerEntity->cTransform->position.y < playerEntity->cTransform->previousPosition.y )) {
+                    std::cout << "coming from down and collided" << std::endl;
+                    playerEntity->cTransform->velocity.y += currentOverlap.y;
+                }
+                else if (previousOverlap.y >= 0 and (playerEntity->cTransform->position.x > playerEntity->cTransform->previousPosition.x)) {
+                    std::cout << "coming from left and collided" << std::endl;
+                    playerEntity->cTransform->velocity.x -= currentOverlap.x;
+                }
+                else if (previousOverlap.y >= 0 and (playerEntity->cTransform->position.x < playerEntity->cTransform->previousPosition.x)) {
+                    std::cout << "coming from right and collided" << std::endl;
+                    playerEntity->cTransform->velocity.x += currentOverlap.x;
+                };
             };
             /*
             2. if condition then previous overlap.

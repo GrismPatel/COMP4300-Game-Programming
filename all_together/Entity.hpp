@@ -17,6 +17,7 @@ class Entity {
         std::unique_ptr<CAnimation> cAnimation;
         std::unique_ptr<CTransform> cTransform;
         std::unique_ptr<CLifespan>  cLifespan;
+        std::unique_ptr<CRectangle> cRectangle;
 
         bool isActive() const;
         const std::string getTag() const;

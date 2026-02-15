@@ -22,6 +22,7 @@ class Game {
 
         void setupLayout();
         void spawnPlayer();
+        void spawnEnemy();
     public:
         Game();
         void run();

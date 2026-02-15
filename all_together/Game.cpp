@@ -14,6 +14,7 @@ Game::Game() {
 
     setupLayout();
     spawnPlayer();
+    spawnEnemy();
 };
 
 void Game::run() {
@@ -78,6 +79,22 @@ void Game::spawnPlayer() {
         m_player->cAnimation->singleFrameWidth*1.f,
         m_player->cAnimation->singleFrameHeigth*1.f
     };
+};
+
+void Game::spawnEnemy() {
+    Entity* enemy = m_entityManager.createEntity("Enemy");
+
+    enemy->cTransform = std::make_unique<CTransform>();
+    enemy->cTransform->position = {300.f, 300.f};
+    enemy->cTransform->size = {
+        32.f,
+        32.f
+    };
+
+    enemy->cRectangle = std::make_unique<CRectangle>();
+    enemy->cRectangle->rectangleShape.setSize(enemy->cTransform->size);
+    enemy->cRectangle->rectangleShape.setPosition(enemy->cTransform->position);
+    enemy->cRectangle->rectangleShape.setFillColor(sf::Color::Red);
 };
 
 void Game::sUserInput() {
@@ -231,10 +248,6 @@ void Game::sCollision() {
                     playerEntity->cTransform->velocity.x += currentOverlap.x;
                 };
             };
-            /*
-            2. if condition then previous overlap.
-            3. identified collision so if top, bottom, left, right we change velocity
-            */
         };
     };
 };
@@ -255,6 +268,10 @@ void Game::sRender() {
             });
             m_window.draw(sprite);
         };
+        if (entity->cRectangle) {
+            std::cout << "enemy?" << std::endl;
+            m_window.draw(entity->cRectangle->rectangleShape);
+        }
     };
     m_window.display();
 };

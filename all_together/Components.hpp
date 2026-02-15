@@ -29,3 +29,7 @@ struct CTransform {
 struct CLifespan {
     float health;
 };
+
+struct CRectangle {
+    sf::RectangleShape rectangleShape;
+};
